@@ -1,12 +1,10 @@
-import { Sun, Clock, Bell } from "lucide-react";
+import { Sun, Bell } from "lucide-react";
 import { useSystemData } from "../../hooks/useSystemData";
-import { useUtcClock } from "../../hooks/useUtcClock";
 import { APP, SYSTEM_MODES, CONNECTION_TONES, ALERT_TONES } from "../../constants";
 import Badge from "../common/Badge";
 import StatusIndicator from "../common/StatusIndicator";
 
 export default function Header() {
-  const utcClock = useUtcClock();
   const { systemStatus, demoMode, alertConsole, groundValidation } = useSystemData();
 
   const noaaTone = CONNECTION_TONES[systemStatus.noaaConnectionStatus] || "muted";
@@ -69,12 +67,6 @@ export default function Header() {
           <span className="chip-label">{alertConsole.alertLevel}</span>
         </div>
 
-        <div className="header-clock" title="Mission UTC clock">
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <Clock size={13} />
-            {utcClock}
-          </span>
-        </div>
       </div>
     </header>
   );

@@ -1,15 +1,15 @@
-import { Sun, Cpu, Magnet, Bell } from "lucide-react";
+import { Sun, Cpu, Satellite, Magnet } from "lucide-react";
 import { motion } from "framer-motion";
 import StatusIndicator from "../common/StatusIndicator";
-import { ALERT_TONES, CONNECTION_TONES } from "../../constants";
+import { CONNECTION_TONES } from "../../constants";
 import { useSystemData } from "../../hooks/useSystemData";
 import { formatNumber, formatPercent } from "../../utils/format";
 
 export default function SystemOverviewStrip() {
-  const { solarTelemetry, spacePrediction, groundValidation, alertConsole } = useSystemData();
+  const { solarTelemetry, spacePrediction, groundValidation, systemStatus } = useSystemData();
 
+  const noaaTone = CONNECTION_TONES[systemStatus.noaaConnectionStatus] || "muted";
   const stationTone = CONNECTION_TONES[groundValidation.groundStationStatus] || "muted";
-  const alertTone = ALERT_TONES[alertConsole.alertLevel] || "muted";
   const predictionTone =
     spacePrediction.predictionStatus === "CRITICAL"
       ? "red"
@@ -37,22 +37,23 @@ export default function SystemOverviewStrip() {
       pulse: predictionTone !== "violet",
     },
     {
-      key: "ground",
+      key: "noaa",
+      icon: Satellite,
+      tone: noaaTone,
+      status: systemStatus.noaaConnectionStatus,
+      value: systemStatus.noaaConnectionStatus,
+      sub: "NOAA GOES data",
+      pulse: noaaTone === "amber",
+    },
+    {
+      key: "hardware",
       icon: Magnet,
       tone: stationTone,
       status: groundValidation.groundStationStatus,
       value: formatNumber(groundValidation.magneticFieldMagnitude, 1),
       unit: "µT",
       sub: `Ground station · ${groundValidation.groundStationId}`,
-    },
-    {
-      key: "alert",
-      icon: Bell,
-      tone: alertTone,
-      status: alertConsole.alertStatus,
-      value: alertConsole.alertLevel,
-      sub: "GMD alert state",
-      pulse: alertTone !== "green",
+      pulse: stationTone === "amber",
     },
   ];
 
